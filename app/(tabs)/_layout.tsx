@@ -2,7 +2,7 @@ import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 import { Tabs } from "expo-router";
 import React from "react";
-import { Image, ImageBackground, Text, View } from "react-native";
+import { Image, ImageBackground, StyleSheet, Text, View } from "react-native";
 
 const TabIcon = ({
   focused,
@@ -41,23 +41,8 @@ const _layout = () => {
     <Tabs
       screenOptions={{
         tabBarShowLabel: false,
-        tabBarItemStyle: {
-          width: "100%",
-          height: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-        },
-        tabBarStyle: {
-          backgroundColor: "#0f0D23",
-          borderRadius: 50,
-          marginHorizontal: 20,
-          marginBottom: 36,
-          height: 52,
-          position: "absolute",
-          overflow: "hidden",
-          borderWidth: 1,
-          borderColor: "#0f0d23",
-        },
+        tabBarItemStyle: styles.tabBarItem,
+        tabBarStyle: styles.tabBar,
       }}
     >
       <Tabs.Screen
@@ -105,3 +90,23 @@ const _layout = () => {
 };
 
 export default _layout;
+
+const styles = StyleSheet.create({
+  tabBarItem: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  tabBar: {
+    backgroundColor: "#0f0D23",
+    borderRadius: 50,
+    marginHorizontal: 20,
+    marginBottom: 36,
+    height: 52,
+    position: "absolute",
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "#0f0d23",
+  },
+});

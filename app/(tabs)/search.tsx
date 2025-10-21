@@ -3,10 +3,17 @@ import SearchBar from "@/components/SearchBar";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 import { fetchMovie } from "@/services/api";
-import { getTrendingMovies, updateSearchCount } from "@/services/appwrite";
+import { updateSearchCount } from "@/services/appwrite";
 import useFetch from "@/services/useFetch";
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Image, Text, View } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -29,13 +36,37 @@ const Search = () => {
     }, 300);
 
     return () => clearTimeout(timeoutId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
   useEffect(() => {
     if (movies?.length && movies[0]) {
       updateSearchCount(searchQuery, movies[0]);
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [movies]);
+
+  const renderItem = useCallback(
+    ({ item }: { item: Movie }) => <MovieCard {...item} />,
+    []
+  );
+
+  const keyExtractor = useCallback((item: Movie) => item.id.toString(), []);
+
+  const ListEmptyComponent = useCallback(
+    () =>
+      !loading && !error ? (
+        <View className="mt-10 px-5">
+          <Text className="text-center text-gray-500">
+            {searchQuery.trim()
+              ? "No movies found."
+              : "Start typing to search for movies."}
+          </Text>
+        </View>
+      ) : null,
+    [loading, error, searchQuery]
+  );
 
   return (
     <View className="flex-1 bg-primary">
@@ -46,16 +77,12 @@ const Search = () => {
       />
       <FlatList
         data={movies}
-        renderItem={({ item }) => <MovieCard {...item} />}
-        keyExtractor={({ id }) => id.toString()}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
         className="px-5"
         numColumns={3}
-        columnWrapperStyle={{
-          justifyContent: "center",
-          gap: 16,
-          marginVertical: 16,
-        }}
-        contentContainerStyle={{ paddingBottom: 100 }}
+        columnWrapperStyle={styles.columnWrapper}
+        contentContainerStyle={styles.contentContainer}
         ListHeaderComponent={
           <>
             <View className="w-full flex-row justify-center mt-20 items-center">
@@ -88,20 +115,21 @@ const Search = () => {
             </View>
           </>
         }
-        ListEmptyComponent={
-          !loading && !error ? (
-            <View className="mt-10 px-5">
-              <Text className="text-center text-gray-500">
-                {searchQuery.trim()
-                  ? "No movies found."
-                  : "Start typing to search for movies."}
-              </Text>
-            </View>
-          ) : null
-        }
+        ListEmptyComponent={<ListEmptyComponent />}
       />
     </View>
   );
 };
 
 export default Search;
+
+const styles = StyleSheet.create({
+  columnWrapper: {
+    justifyContent: "flex-start",
+    gap: 16,
+    marginVertical: 16,
+  },
+  contentContainer: {
+    paddingBottom: 100,
+  },
+});

@@ -1,6 +1,6 @@
 import { icons } from "@/constants/icons";
 import React from "react";
-import { Image, Text, TextInput, View } from "react-native";
+import { Image, TextInput, View } from "react-native";
 
 interface SearchBarProps {
   onPress?: () => void;

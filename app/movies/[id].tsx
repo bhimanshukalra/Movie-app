@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   Image,
   ScrollView,
+  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -36,6 +37,12 @@ const MovieDetail = () => {
     error,
   } = useFetch(() => fetchMovieDetails(movieId));
 
+  const imageSource = {
+    uri: `https://image.tmdb.org/t/p/w500${movie?.poster_path}`,
+  };
+  const budget = Math.round((movie?.budget ?? 0) / 1_000_000);
+  const revenue = Math.round((movie?.revenue ?? 0) / 1_000_000);
+
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center bg-primary">
@@ -54,12 +61,10 @@ const MovieDetail = () => {
 
   return (
     <View className="bg-primary flex-1">
-      <ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
+      <ScrollView contentContainerStyle={styles.scrollViewContentContainer}>
         <View>
           <Image
-            source={{
-              uri: `https://image.tmdb.org/t/p/w500${movie?.poster_path}`,
-            }}
+            source={imageSource}
             className="w-full h-[550px]"
             resizeMode="stretch"
           />
@@ -93,17 +98,12 @@ const MovieDetail = () => {
               movie?.genres.map((genre) => genre.name).join(" - ") || "N/A"
             }
           />
-          {movie?.budget && (
-            <MovieInfo
-              label="Budget"
-              value={`$${Math.round(movie?.budget / 1_000_000)} million`}
-            />
+
+          {budget > 0 && (
+            <MovieInfo label="Budget" value={`$${budget} million`} />
           )}
-          {movie?.revenue && (
-            <MovieInfo
-              label="Revenue"
-              value={`$${Math.round(movie?.revenue / 1_000_000)} million`}
-            />
+          {revenue > 0 && (
+            <MovieInfo label="Revenue" value={`$${revenue} million`} />
           )}
 
           <MovieInfo
@@ -133,3 +133,7 @@ const MovieDetail = () => {
 };
 
 export default MovieDetail;
+
+const styles = StyleSheet.create({
+  scrollViewContentContainer: { paddingBottom: 80 },
+});
